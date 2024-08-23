@@ -22,8 +22,8 @@ async def handler(request:Request, exc:RequestValidationError):
 async def index(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
-@app.get("/")
-async def GetResult(name, blood_type):
+@app.get("/result", response_class=HTMLResponse)
+async def GetResult(request:Request, name, blood_type):
     completion = client.chat.completions.create(
         model="gpt-4o-mini",
         messages=[
@@ -36,7 +36,7 @@ async def GetResult(name, blood_type):
             }
         ]
     )
-    return {"message" : completion.choices[0].message.content}
+    return templates.TemplateResponse("result.html", {"request": request, "result": completion.choices[0].message.content})
 
 if __name__ == '__main__':
-    uvicorn.run("main.app", port=8000, reload=True)
+    uvicorn.run("main:app", port=8000, reload=True)
