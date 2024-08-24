@@ -18,7 +18,7 @@ app.add_middleware(
                    "http://127.0.0.1:8000"
                    ],
     allow_credentials=True,
-    allow_methods=["GET"],
+    allow_methods=["*"],
     allow_headers=["*"],
 )
 
@@ -33,7 +33,7 @@ async def handler(request:Request, exc:RequestValidationError):
 async def index(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
-@app.get("/result", response_class=HTMLResponse)
+@app.post("/result", response_class=HTMLResponse)
 async def GetResult(request:Request, name: str = Form(), blood_type: str = Form()):
     completion = client.chat.completions.create(
         model="gpt-4o-mini",
