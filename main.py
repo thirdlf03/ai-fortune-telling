@@ -1,5 +1,4 @@
-#!/usr/bin/python3
-from fastapi import FastAPI, Request, status
+from fastapi import FastAPI, Request, status, Form
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import HTMLResponse, JSONResponse
 from fastapi.templating import Jinja2Templates
@@ -10,11 +9,14 @@ import uvicorn
 key=""
 client = OpenAI(api_key=key)
 
-app = FastAPI()
+app = FastAPI(docs_url=None, redoc_url=None)
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["0.0.0.0"],
+    allow_origins=["http://localhost",
+                   "http://127.0.0.1",
+                   "http://127.0.0.1:8000"
+                   ],
     allow_credentials=True,
     allow_methods=["GET"],
     allow_headers=["*"],
@@ -32,7 +34,7 @@ async def index(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
 @app.get("/result", response_class=HTMLResponse)
-async def GetResult(request:Request, name, blood_type):
+async def GetResult(request:Request, name: str = Form(), blood_type: str = Form()):
     completion = client.chat.completions.create(
         model="gpt-4o-mini",
         messages=[
