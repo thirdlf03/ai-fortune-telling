@@ -34,7 +34,7 @@ async def index(request: Request):
     return templates.TemplateResponse("index.html", {"request": request})
 
 @app.post("/result", response_class=HTMLResponse)
-async def GetResult(request:Request, name: str = Form(), blood_type: str = Form()):
+async def GetResult(request:Request, name: str = Form(), blood_type: str = Form(), category: str = Form()):
     completion = client.chat.completions.create(
         model="gpt-4o-mini",
         messages=[
@@ -43,7 +43,7 @@ async def GetResult(request:Request, name: str = Form(), blood_type: str = Form(
             {"role": "system", "content": "出力は、~さんのラッキーカラーは~色です。から始めてください"},
             {
                 "role": "user",
-                "content": f"名前は{name}で血液型は{blood_type}です。"
+                "content": f"名前は{name}で血液型は{blood_type}です。{category}について答えてください。"
             }
         ]
     )
